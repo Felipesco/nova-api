@@ -4,6 +4,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . ' ./vendor/autoload.php';
+require_once __DIR__ . '/model/conexaoBD.php';
 
 $app = AppFactory::create();
 
@@ -13,7 +14,21 @@ $app->get('/', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+//GET /Alunos
+$app->get('/alunos', function (Request $request, Response $response, $args){
+    $sql = "SELECT * FROM tbAluno";
 
+    $alunos = array();
+    $resultado = ConexaoBD::getInstance()->getHandler()->query($sql);
+
+    while ($linha = $resultado->fetch_assoc()){
+        $alunos[] = $linha;
+    }
+
+    $response->getBody()->write(json_encode($alunos));
+    return $response -> withHeader('Content-type', 'application/json');
+
+});
 
 
 
